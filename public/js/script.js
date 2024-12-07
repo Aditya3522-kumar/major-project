@@ -1,4 +1,8 @@
 // Example starter JavaScript for disabling form submissions if there are invalid fields
+
+// const methodOverride = require('method-override');
+// app.use(methodOverride('_method'));
+
 (() => {
     'use strict'
   
