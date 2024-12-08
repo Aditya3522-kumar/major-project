@@ -18,10 +18,12 @@ router.get("/new" , (req,res)=>{
 });
 router.post("/new",wrapasync(async(req,res,next)=>{
     if(!req.body.listing){
+        req.flash("error" , "not able to add listing");
         throw new ExpressError(400 , "bad request");
     }
     console.log(req.body.listing);
     await new Listing(req.body.listing).save();
+    req.flash("success" , "listing created successfully");
     res.redirect("/listings");
 })
 );
@@ -59,8 +61,8 @@ router.put("/:id", wrapasync(async(req,res)=>{
 router.delete("/:id/delete" ,wrapasync(async(req,res)=>{
     let {id} = req.params;
     let deleted = await Listing.findByIdAndDelete(id);
-    
-    res.redirect("/listings");
+    req.flash("success","listing deleted sucessfully");
+     res.redirect("/listings");
 }));
 
 // const validateListing = (req, res, next) => {

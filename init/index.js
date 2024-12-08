@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
-const initData = require("./data");
+const initData = require("./data.js");
 const Listing = require("../models/listing.js");
 const Review = require("../models/reviews.js");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.MONGO_URL;
+console.log(MONGO_URL);
 
 main().then(()=>{
     console.log("database connected");
