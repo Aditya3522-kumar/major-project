@@ -4,14 +4,19 @@ const mongoose = require("mongoose");
 const path = require('path');
 const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
-const listings = require("./route/listing.js");
+const listingrouter = require("./route/listing.js");
 app.use(methodOverride('_method'));
 let ExpressError = require("./utils/ExpressError.js");
-const reviews = require("./route/reviews.js");
+const reviewrouter = require("./route/reviews.js");
 const session = require("express-session");
 const flash = require("connect-flash");
 const dotenv = require("dotenv");
 dotenv.config();
+const passport = require("passport");
+const localStrategy = require("passport-local");
+const User = require("./models/user.js");
+const user = require("./models/user.js");
+const userrouter = require("./route/user.js");
 
 const sessionOptions = {
     secret:"secret" ,
@@ -26,6 +31,13 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 
 
@@ -36,8 +48,8 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
 
-// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-const MONGO_URL = process.env.MONGO_URL;	
+const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = process.env.MONGO_URL;	
 
 
 main().then(()=>{
@@ -53,12 +65,23 @@ async function main(){
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
     next();
-})
+});
 
+app.get("/demouser" , async (req,res)=>{
+    const fakeUser = new User({
+        email:"student@gmail.com",
+        username:"delta-student",
+    });
 
-app.use("/listings" , listings);
-app.use("/listings/:id/reviews" , reviews);
+    let registeredUser = await user.register(fakeUser , "helloworld");
+    res.send(registeredUser);
+  })
+
+app.use("/listings" , listingrouter);
+app.use("/listings/:id/reviews" , reviewrouter);
+app.use("/" , userrouter);
 
 //this matches all route if nothing matched this will be called.
 app.all("*" , (req,res,next)=>{
