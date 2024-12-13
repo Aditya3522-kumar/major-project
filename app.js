@@ -17,6 +17,8 @@ const localStrategy = require("passport-local");
 const User = require("./models/user.js");
 const user = require("./models/user.js");
 const userrouter = require("./route/user.js");
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 const sessionOptions = {
     secret:"secret" ,
@@ -66,6 +68,7 @@ app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
+    console.log(res.locals.currUser);
     next();
 });
 
@@ -80,7 +83,7 @@ app.get("/demouser" , async (req,res)=>{
   })
 
 app.use("/listings" , listingrouter);
-app.use("/listings/:id/reviews" , reviewrouter);
+app.use("/listings" , reviewrouter);
 app.use("/" , userrouter);
 
 //this matches all route if nothing matched this will be called.
