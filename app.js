@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV !== "production"){
+    require("dotenv").config();
+}
+// console.log(process.env.SECRET);
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -10,8 +15,8 @@ let ExpressError = require("./utils/ExpressError.js");
 const reviewrouter = require("./route/reviews.js");
 const session = require("express-session");
 const flash = require("connect-flash");
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 const passport = require("passport");
 const localStrategy = require("passport-local");
 const User = require("./models/user.js");
@@ -19,6 +24,8 @@ const user = require("./models/user.js");
 const userrouter = require("./route/user.js");
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
+
 
 const sessionOptions = {
     secret:"secret" ,
@@ -39,9 +46,6 @@ passport.use(new localStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-
-
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -68,7 +72,7 @@ app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
-    console.log(res.locals.currUser);
+    // console.log(res.locals.currUser);
     next();
 });
 
@@ -87,15 +91,16 @@ app.use("/listings" , reviewrouter);
 app.use("/" , userrouter);
 
 //this matches all route if nothing matched this will be called.
-app.all("*" , (req,res,next)=>{
- next(new ExpressError(406,"did not matched any route"));
-});
 //custom error handling middleware.
 app.use((err, req, res, next) => {
     let { statuscode = 500, message = "error occurred" } = err;
+    console.log(err.message);
     res.status(statuscode).render("error.ejs", { message });
 });
 
+app.all("*" , (req,res,next)=>{
+ next(new ExpressError(406,"did not matched any route"));
+});
 
 app.listen(8000,()=>{
     console.log("server is listening to 8000");

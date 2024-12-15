@@ -5,11 +5,11 @@ const Listing = require("../models/listing.js");
 module.exports.create = async (req, res) => {
     const { id } = req.params;
     console.log(req.params);
-    console.log(id ,"from post request");
+    // console.log(id ,"from post request");
     const review = new Review(req.body.review);
     review.author = req.user._id;
     const listing = await Listing.findById(id);
-    console.log(listing , "listing");
+    // console.log(listing , "listing");
     if (!listing) {
         req.flash("error", "Listing not found");
         return res.redirect("/listings");

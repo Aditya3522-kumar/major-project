@@ -19,15 +19,17 @@ module.exports.show = async(req,res)=>{
     res.render("listings/show.ejs", {listing, curruser: req.user});
 };
 module.exports.create = async(req,res)=>{
-    console.log(req.body ,"from new");
+    // console.log(req.body ,"from new");
     if(!req.body.listing){
         req.flash("error" , "not able to add listing");
         throw new ExpressError(400 , "bad request , no listing data");
     }
-    console.log(req.body.listing);
+    // console.log(req.body.listing);
     let listing = new Listing(req.body.listing);
     if (req.file) {
-        listing.image = req.file.path; // Save the uploaded file path
+        listing.image.url = req.file.path; // Save the uploaded file path
+        listing.image.filename = req.file.filename;
+        // listing.image.public_id = req.file.public_id;
     }
     listing.owner = req.user._id;
     await listing.save();
@@ -47,6 +49,7 @@ module.exports.edit = async(req,res)=>{
 
 
 module.exports.update = async(req, res) => {
+    console.log(req.body.listing , "from update");
     if (!req.body.listing) {
         throw new ExpressError(400, "Invalid listing data");
     }
