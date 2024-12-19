@@ -37,14 +37,17 @@ module.exports.create = async(req,res)=>{
     res.redirect("/listings");
 };
 
+
 module.exports.edit = async(req,res)=>{
     let {id}= req.params;
     const listing = await Listing.findById(id);
     if (!listing) {
         throw new ExpressError(404, "Listing not found");
     } 
+    let originalimageurl = listing.image.url;
+    originalimageurl = originalimageurl.replace("/uploads/", "/uploads/h_100,w_550/");
     console.log(listing , "in edit");
-    res.render("listings/edit.ejs", {listing});
+    res.render("listings/edit.ejs", {listing , originalimageurl});
 };
 
 
@@ -56,7 +59,15 @@ module.exports.update = async(req, res) => {
     let {id} = req.params;
 
     // Proceed with the update if the user is the owner
-      await Listing.findByIdAndUpdate(id, { ...req.body.listing }, { new: true });
+      let updatedListing = await Listing.findByIdAndUpdate(id, { ...req.body.listing }, { new: true });
+
+      if(typeof req.file !== "undefined"){
+      let url = req.file.path;
+      let filename = req.file.filename;
+      updatedListing.image = {url,filename};
+      await updatedListing.save();
+      }
+      
     req.flash("success", "Listing updated successfully");
     res.redirect(`/listings/${id}`);
 };

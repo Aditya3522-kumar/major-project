@@ -1,6 +1,123 @@
 <% layout("layouts/boilerplate") %>
 <body>
-    <h3>All hotel list : </h3>
+    <style>
+      #filters{
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .filter{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0.8rem 2rem;
+        opacity: 0.7;
+      }
+      .filter:hover{
+        cursor: pointer;
+        opacity: 1;
+      }
+      .filter p{
+        font-size: 0.8rem;
+      }
+      .tax{
+        display: none;
+      }
+      .tax-toogle{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1rem;
+        border: 0.1rem solid black;
+        padding: 0.5rem;
+        border-radius: 0.7rem;
+      }
+      .filters-button {
+        display: none;
+        width: 100%;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .filters-content {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      @media only screen and (max-width: 600px) {
+        .filters-button {
+          display: block;
+        }
+        .filters-content {
+          display: none;
+        }
+        .filters-content.show {
+          display: flex;
+          flex-direction: column;
+        }
+        .filter{
+          margin: 0.8rem 0rem;  
+        }
+        .tax-toogle{
+          margin: 1rem 0rem;
+        }
+      }
+    </style>
+    <div id="filters">
+      <button class="filters-button">
+        <i class="fa-solid fa-sliders"></i> Filters
+      </button>
+      <div class="filters-content">
+        <div class="filter">
+          <div><i class="fa-solid fa-fire"></i></div>
+          <p>trending</p>
+        </div>
+
+        <div class="filter">
+          <div><i class="fa-solid fa-bed"></i></div>
+          <p>rooms</p>
+        </div>
+
+        <div class="filter">
+          <div><i class="fa-solid fa-mountain-city"></i></div>
+          <p>iconic cities</p>
+        </div>
+  
+        <div class="filter">
+          <div><i class="fa-solid fa-mountain"></i></div>
+          <p>mountains</p>
+        </div>
+
+        <div class="filter">
+          <div><i class="fa-solid fa-hotel"></i></div>
+          <p>castle</p>
+        </div>
+    
+        <div class="filter">
+          <div><i class="fa-solid fa-swimming-pool"></i></div>
+          <p>amazing pools</p>
+        </div>
+
+        <div class="filter">
+          <div><i class="fa-solid fa-tractor"></i></div>
+          <p>farm</p>
+        </div>
+    
+        <div class="filter">
+          <div><i class="fa-solid fa-tent"></i></div>
+          <p>camping</p>
+        </div>
+        <div class="tax-toogle">
+          <div class="form-check-reverse form-switch">
+            <input class="form-check-input" type="checkbox" role="switch"  id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault" >Display total after taxes</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
   <%for(let listing of allListings){%>
     <a href="/listings/<%=listing._id%>" class="listing-link">
@@ -13,7 +130,7 @@
           <p class="card-text">
            <b> <%=listing.title%> </b>
             <br>
-            ₹<%= listing.price.toLocaleString("en-IN") %> /night
+            ₹<%= listing.price.toLocaleString("en-IN") %> /night  <span class="tax">+ 18% GST</span>
           </p>
         </div>
       </div>
@@ -22,4 +139,26 @@
 
 </div>
 </body>
+
+<script>
+  let taxToogle = document.getElementById("flexSwitchCheckDefault");
+  taxToogle.addEventListener("click" ,()=>{
+    let tax = document.querySelectorAll(".tax");
+    if(taxToogle.checked){
+      tax.forEach(element => {
+        element.style.display = "inline";
+      });
+    }
+    else{
+      tax.forEach(element => {
+        element.style.display = "none";
+      });
+    }
+  })
+</script>
+<script>
+  document.querySelector('.filters-button').addEventListener('click', function() {
+    document.querySelector('.filters-content').classList.toggle('show');
+  });
+</script>
 
