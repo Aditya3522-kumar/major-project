@@ -73,9 +73,12 @@
               <p class="starability-result card-text" data-rating="<%= review.rating %>">
                 Rated: <%= review.rating %> stars
               </p>
-              <form action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST" class="mb-3">
-                <button class="btn btn-dark">DELETE</button>
-              </form>
+              <% if(curruser && curruser._id.equals(review.author._id)){ %>
+                <a href="/listings/<%=listing._id%>/reviews/<%=review._id%>/edit" class="btn btn-dark edit-btn">EDIT</a>
+                <form action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" method="POST" class="mb-3">
+                  <button class="btn btn-dark">DELETE</button>
+                </form>
+              <% } %>
             </div>
           </div>
         <% } %>
