@@ -14,6 +14,7 @@ app.use(methodOverride('_method'));
 let ExpressError = require("./utils/ExpressError.js");
 const reviewrouter = require("./route/reviews.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 // const dotenv = require("dotenv");
 // dotenv.config();
@@ -27,8 +28,27 @@ app.use(express.urlencoded({extended:true}));
 
 
 
+
+
+
+
+const store = MongoStore.create({
+    mongoUrl: process.env.ATLASDB_URL,
+    crypto:{
+        secret:process.env.SECRET,
+    },
+    touchAfter: 24 * 60 * 60,
+});
+
+
+store.on("error" , function(error){
+    console.log(error , "session error in mongo store");
+});
+
+
 const sessionOptions = {
-    secret:"secret" ,
+    store,
+    secret:process.env.SECRET,
     resave:false , 
     saveUninitialized:true,
     cookie:{
@@ -54,7 +74,7 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.ATLASDB_URL;
 // const MONGO_URL = process.env.MONGO_URL;	
 
 

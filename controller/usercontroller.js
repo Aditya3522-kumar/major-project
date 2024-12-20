@@ -13,9 +13,9 @@ module.exports.signup = async(req,res)=>{
          req.flash("success" , "user signup completed");
          res.redirect("/listings");
      })
-     console.log(registeredUser);
-     req.flash("success" , "user signup completed");
-     res.redirect("/listings");
+    //  console.log(registeredUser);
+    //  req.flash("success" , "user signup completed");
+    //  res.redirect("/listings");
     }catch(e){
      req.flash("error" , e.message);
      res.redirect("/signup");
